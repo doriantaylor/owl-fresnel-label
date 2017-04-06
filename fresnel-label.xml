@@ -10,11 +10,11 @@
       xmlns:bibo="http://purl.org/ontology/bibo/"
       xmlns:foaf="http://xmlns.com/foaf/0.1/"
       xmlns:vann="http://purl.org/vocab/vann/"
-      xmlns:flabel="http://privatealpha.com/ontology/fresnel-label/1#"
+      xmlns:flabel="https://privatealpha.com/ontology/fresnel-label/1#"
       xml:lang="en">
   <head>
     <title about="#" property="dct:title">Fresnel Labeling Extension</title>
-    <base href="http://privatealpha.com/ontology/fresnel-label/1"/>
+    <base href="https://privatealpha.com/ontology/fresnel-label/1"/>
     <!--<meta about="#" property="rdfs:label" content="An Agent Certification Ontology"/>-->
     <meta about="#" property="vann:preferredNamespacePrefix" content="acrt"/>
     <link about="#" rel="rdfs:isDefinedBy bibo:uri" href="#"/>
@@ -30,7 +30,7 @@
         <!--<dt>Updated</dt>
         <dd property="2012-12-12T16:04:50-0800">December 12, 2012</dd>-->
         <dt>Namespace URI</dt>
-        <dd><a href="#">http://privatealpha.com/ontology/fresnel-label/1#</a></dd>
+        <dd><a href="#">https://privatealpha.com/ontology/fresnel-label/1#</a></dd>
         <dt>Preferred Namespace Prefix</dt>
         <dd about="#" property="vann:preferredNamespacePrefix">flabel</dd>
       </dl>
