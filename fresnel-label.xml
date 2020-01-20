@@ -1,190 +1,206 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="/transform"?>
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
       xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
       xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
       xmlns:owl="http://www.w3.org/2002/07/owl#"
+      xmlns:sh="http://www.w3.org/ns/shacl#"
       xmlns:dct="http://purl.org/dc/terms/"
       xmlns:skos="http://www.w3.org/2004/02/skos/core#"
       xmlns:bibo="http://purl.org/ontology/bibo/"
       xmlns:foaf="http://xmlns.com/foaf/0.1/"
       xmlns:vann="http://purl.org/vocab/vann/"
-      xmlns:flabel="https://privatealpha.com/ontology/fresnel-label/1#"
+      xmlns:fresnel="http://www.w3.org/2004/09/fresnel#"
+      xmlns:flx="https://privatealpha.com/ontology/fresnel-label/1#"
       xml:lang="en">
   <head>
     <title about="#" property="dct:title">Fresnel Labeling Extension</title>
     <base href="https://privatealpha.com/ontology/fresnel-label/1"/>
     <!--<meta about="#" property="rdfs:label" content="An Agent Certification Ontology"/>-->
-    <meta about="#" property="vann:preferredNamespacePrefix" content="acrt"/>
+    <meta about="#" property="vann:preferredNamespacePrefix" content="flx" datatype="xsd:token"/>
     <link about="#" rel="rdfs:isDefinedBy bibo:uri" href="#"/>
   </head>
-  <body>
-    <h2>Fresnel Labeling Extension</h2>
-    <div about="#" typeof="owl:Ontology bibo:Webpage">
+  <body about="" typeof="bibo:Webpage">
+    <section about="#" typeof="owl:Ontology">
+      <h2>Fresnel Labeling Extension</h2>
       <dl>
         <dt>Author</dt>
         <dd><a rel="external dct:creator" href="http://doriantaylor.com/person/dorian-taylor#me"><span property="foaf:name">Dorian Taylor</span></a></dd>
         <dt>Created</dt>
         <dd property="dct:created" datatype="xsd:dateTime" content="2014-06-03T20:04:02Z">June 3, 2014</dd>
-        <!--<dt>Updated</dt>
-        <dd property="2012-12-12T16:04:50-0800">December 12, 2012</dd>-->
+        <dt>Updated</dt>
+        <dd property="dct:modified" datatype="xsd:dateTime" content="2020-01-11T20:46:50Z">January 11, 2020</dd>
         <dt>Namespace URI</dt>
         <dd><a href="#">https://privatealpha.com/ontology/fresnel-label/1#</a></dd>
         <dt>Preferred Namespace Prefix</dt>
-        <dd about="#" property="vann:preferredNamespacePrefix">flabel</dd>
+        <dd about="#" property="vann:preferredNamespacePrefix" datatype="xsd:token">flx</dd>
       </dl>
-      <p property="rdfs:comment dct:description">This document specifies an extension for ordering labels to the Fresnel vocabulary.</p>
-      <p>The Fresnel vocabulary provides a useful mechanism for encoding the desired behaviour for rendering the presence, sequence, and additional styling accoutrements to the properties associated with a given RDF resource.</p>
-      <p>However, neither the core nor extended Fresnel vocabularies explicitly depict a method for specifying the sequence of property <em>values</em>. A resource can have multiple values for a given property, which, in addition to resources and blank nodes, can contain languages, datatypes, or XML content.</p>
-      <blockquote class="note">
-        <p>It is worth noting that datatype and cardinality constraints in OWL, while convenient as such, are <em>not</em> supposed to be interpreted as integrity constraints, and are not reliable predictors of actual content. Therefore it is important for rendering systems to be prepared to handle unexpected values in RDF properties.</p>
-      </blockquote>
-      <p>If we are faced with the problem of selecting <em>exactly one</em> property value to display, for instance, as a label, how would we choose it? The <code>fresnel:alternateProperties</code> property can give us a short list, but past that we're left on our own. We're in the same situation when we're trying to sort multiple property values any other way than a naïve lexical sort.</p>
-      <h3>The Algorithm</h3>
-    </div>
-    <div>
+      <p property="rdfs:comment dct:description">This document specifies additional extensions to the Fresnel vocabulary.</p>
+      <section>
+        <h3>Value Ordering</h3>
+        <p>The Fresnel vocabulary provides a useful mechanism for encoding the desired behaviour for rendering the presence, sequence, and additional styling accoutrements to the properties associated with a given RDF resource.</p>
+        <p>However, neither the core nor extended Fresnel vocabularies explicitly depict a method for specifying the sequence of property <em>values</em>. A resource can have multiple values for a given property, which, in addition to resources and blank nodes, can contain languages, datatypes, or XML content.</p>
+        <aside role="note">
+          <p>It is worth noting that datatype and cardinality constraints in OWL, while convenient as such, are <em>not</em> supposed to be interpreted as integrity constraints, and are not reliable predictors of actual content. Therefore it is important for rendering systems to be prepared to handle unexpected values in RDF properties.</p>
+        </aside>
+        <p>If we are faced with the problem of selecting <em>exactly one</em> property value to display, for instance, as a label, how would we choose it? The <code>fresnel:alternateProperties</code> property can give us a short list, but past that we're left on our own. We're in the same situation when we're trying to sort multiple property values any other way than a naïve lexical sort.</p>
+        <section>
+          <h4>The Algorithm</h4>
+          <p>We must first consider sorting literal values and then sorting resources.</p>
+          <p>Literal values in <abbr>RDF</abbr> have three different dimensions, although only one of the latter two can be active at once:</p>
+          <ul>
+            <li>lexical content</li>
+            <li>language</li>
+            <li>datatype</li>
+          </ul>
+          <p>There is also a fourth quasi-dimension, which is the specific property the literal rode in on.</p>
+          <aside role="note">
+            <p>you have the property which was given by the property description, and then you have the property which was actually selected, which could be an arbitrarily long path of subproperty/equivalent-property relations</p>
+          </aside>
+          <p>Lexical content can also be interpreted as a number or number-like object based on the datatype, however this ought to be amenable to being overridden.</p>
+          <aside role="note">
+            <p><code>xsd:dateTime</code> literals, for instance, should have their time zones normalized before being compared.</p>
+          </aside>
+          <aside role="note">
+            <p>There is also a <q>smart</q> sorting algorithm (à la macOS Finder) that breaks up strings into arrays and treats runs of digits as numbers, comparing them numerically to each other but lexically to strings.</p>
+          </aside>
+          <p>there is the issue of sorting plain/language/datatype values wholesale</p>
+          <p>There is the issue of showing and hiding values when there is more than one of them; we can just sort the list and take the first one, but we need to be able to instruct the property description that all subsequent results after the first one should be hidden.</p>
+          <p>there is the issue of subproperties and equivalent properties, ie do we penalize topological distance from the asserted property and if so how much</p>
+          <p><code>fresnel:alternateProperties</code> and <code>fresnel:mergeProperties</code> have different implications. The former implies testing for the presence of one property and then another until you find the one you want; the latter implies pooling all the properties together.</p>
+          <p><code>fresnel:allProperties</code> also has no blanket policy and will have to be sorted, but in this case we will be sorting the <em>properties</em> themselves, not their <em>values</em>.</p>
+          <hr/>
+          <p>resource values have their own lexical content but also tend to be associated with some sort of label or other</p>
+          <p>resources also have types, and it is conceivable to want to sort resource values by their own type</p>
+          <p>a property may mix literal and resource values together</p>
+          
+        </section>
+      </section>
+      <section>
+        <h3>Reverse Properties</h3>
+        <p>Short of <abbr title="Fresnel Selector Language">FSL</abbr> or <abbr>SPARQL</abbr> selectors, there is no denotation of <em>reverse</em> properties in plain Fresnel.</p>
+        <p>A common scenario for reverse properties is when the subject is in a list, collection, or other blank node-identified entity, and we are looking for a link to a <em>resource</em>. We need to be able to eg trace up to the head of the list and see what property ultimately connected the subject to the reverse relation.</p>
+      </section>
+    </section>
+    <section>
       <h2>Classes</h2>
-      <!--
-      <p>At this time, there is only the single class, <a href="#Certification">Certification</a>.</p>
-      <div id="Certification" about="[acrt:Certification]" typeof="owl:Class">
-        <h4 property="rdfs:label">Certification</h4>
-        <p property="rdfs:comment">This class represents the abstract notion of certification, of an agent, by another agent, that the first agent possesses some property or set of properties implied by the certification, potentially within some spatiotemporal scope, and which may or may not be designated by some identifier.</p>
-        <dl>-->
-          <!--<dt>Subclass of:</dt>
-          <dd><a rel="external rdfs:subClassOf" href="http://www.w3.org/2004/02/skos/core#Concept">skos:Concept</a></dd>
-          <dt>Disjoint with:</dt>
-          <dd><a rel="owl:disjointWith" href="#Position">ibis:Position</a></dd>
-          <dd><a rel="owl:disjointWith" href="#Argument">ibis:Argument</a></dd>
-          --><!--
-          <dt>Examples:</dt>
-          <dd>
-            <ul>
-              <li property="skos:example">The issuance of a government-regulated privilege, e.g. driver's license</li>
-              <li property="skos:example">The issuance of an academic degree to a particular person</li>
-              <li property="skos:example">An officially-recognized trade qualification, e.g. a welding ticket</li>
-              <li property="skos:example">A mandatory professional status, e.g. bar association membership</li>
-              <li property="skos:example">A private certification of achievement, e.g. CISSP</li>
-              <li property="skos:example">An errors and omissions insurance policy</li>
-              <li property="skos:example">A pet license, where the principal is an animal</li>
-              <li property="skos:example">The notarization of an affadavit</li>
-              <li property="skos:example">An award (e.g. 2014 Nobel Prize in physics)</li>
-              <li>Anything that resembles some entity underwriting some attribute, privilege, skill, achievement, or claim of some other entity.</li>
-            </ul>
-          </dd>
-        </dl>
-        <p><a rel="rdfs:isDefinedBy" href="#">Back to Top</a></p>
-      </div>
-      -->
-    </div>
-    <div>
+      <section>
+        <h3>Value Ordering</h3>
+        <section id="SortingPolicy" about="[flx:SortingPolicy]" typeof="owl:Class">
+          <h4 property="rdfs:label">SortingPolicy</h4>
+          <p property="rdfs:comment">This class encapsulates a reusable sorting policy which can be applied to multiple property descriptions.</p>
+          <dl>
+            <dt>Subclass of:</dt>
+            <dd><a rel="rdfs:subClassOf" resource="sh:PropertyShape" href="https://www.w3.org/TR/shacl/#property-shapes">sh:PropertyShape</a></dd>
+          </dl>
+          <p><a rel="rdfs:isDefinedBy" href="#">Back to Top</a></p>
+        </section>
+        <section id="SortPropertyList" about="[flx:SortPropertyList]" typeof="owl:Class">
+          <h4 property="rdfs:label">SortPropertyList</h4>
+          <p property="rdfs:comment">A SortPropertyList is just an ordinary list with some additional constraints related to sorting properties.</p>
+          <dl>
+            <dt>Subclass of:</dt>
+            <dd><a rel="rdfs:subClassOf" resource="rdf:List" href="">rdf:List</a></dd>
+            <dt>Property restrictions:</dt>
+            <dd rel="rdfs:subClassOf" resource="_:op1">
+              <a rel="owl:onProperty" resource="rdf:first" href="">rdf:first</a> <span rel="owl:allValuesFrom"><span about="_:uo1" rel="owl:unionOf">&#x2208; <a about="_:p1" rel="rdf:first" resource="rdf:Property" href="">rdf:Property</a> &#x222a; <span about="_:p1" rel="rdf:rest"><a about="_:p2" rel="rdf:first" resource="sh:PropertyShape" href="">sh:PropertyShape</a><span about="_:p2" rel="rdf:rest" resource="rdf:nil"/></span></span></span>
+            </dd>
+            <dd rel="rdfs:subClassOf" resource="_:op2">
+              <a rel="owl:onProperty" resource="rdf:rest" href="">rdf:rest</a> &#x2208; <a rel="owl:allValuesFrom" href="#SortPropertyList">flx:SortPropertyList</a>
+            </dd>
+          </dl>
+        </section>
+      </section>
+    </section>
+    <section>
       <h2>Properties</h2>
-      <div id="longest" about="[flabel:longest]" typeof="owl:DatatypeProperty">
-        <h4 property="rdfs:label">longest</h4>
-        <p property="rdfs:comment">When this flag is set to true, and the sorting is lexical, longer strings, rather than shorter, come first.</p>
-        <blockquote class="note">
-          <p property="skos:note">In a conventional lexical sort, two strings which start out identical but one is longer, the longer string will be placed after the shorter one. This flag signals the opposite behaviour.</p>
-        </blockquote>
-        <dl>
-          <dt>Domain:</dt>
-          <dd><a rel="external rdfs:domain" href="http://www.w3.org/2004/09/fresnel#PropertyDescription">fresnel:PropertyDescription</a></dd>
-          <dt>Range:</dt>
-          <dd><a rel="external rdfs:range" href="http://www.w3.org/2001/XMLSchema#boolean">xsd:boolean</a></dd>
-<!--
-          <dt>See also:</dt>
-          <dd><a rel="external rdfs:seeAlso" href="http://www.w3.org/2004/02/skos/core#Concept">skos:Concept</a></dd>
-          <dd><a rel="external rdfs:seeAlso" href="http://www.w3.org/TR/vocab-org/#org:Role">org:Role</a></dd>
-          <dd><a rel="external rdfs:seeAlso" href="http://smiy.sourceforge.net/cco/spec/cognitivecharacteristics.html">The Cognitive Characteristics Ontology</a></dd>-->
-        </dl>
-        <p><a rel="rdfs:isDefinedBy" href="#">Back to Top</a></p>
-      </div>
-<!--
-      <div id="principal" about="[acrt:principal]" typeof="owl:ObjectProperty">
-        <h4 property="rdfs:label">principal</h4>
-        <p property="rdfs:comment">This property specifies who or what agent is being certified.</p>
-        <blockquote class="note">
-          <p property="skos:note">The principal of the certification can be any agent, like a person, company, animal, AI, whatever.</p>
-        </blockquote>
-        <dl>
-          <dt>Domain:</dt>
-          <dd><a rel="rdfs:domain" href="#Certification">acrt:Certification</a></dd>
-          <dt>Range:</dt>
-          <dd><a rel="external rdfs:range" href="http://xmlns.com/foaf/0.1/Agent">foaf:Agent</a></dd>
-          <dt>Inverse of:</dt>
-          <dd><a rel="owl:inverseOf" href="#has-certification">acrt:has-certification</a></dd>
-        </dl>
-        <p><a rel="rdfs:isDefinedBy" href="#">Back to Top</a></p>
-      </div>
-      <div id="has-certification" about="[acrt:has-certification]" typeof="owl:ObjectProperty">
-        <h4 property="rdfs:label">has-certification</h4>
-        <p property="rdfs:comment">This property specifies that an agent possesses a given certification.</p>
-        <dl>
-          <dt>Domain:</dt>
-          <dd><a rel="external rdfs:domain" href="http://xmlns.com/foaf/0.1/Agent">foaf:Agent</a></dd>
-          <dt>Range:</dt>
-          <dd><a rel="rdfs:range" href="#Certification">acrt:Certification</a></dd>
-          <dt>Inverse of:</dt>
-          <dd><a rel="owl:inverseOf" href="#principal">acrt:principal</a></dd>
-        </dl>
-        <p><a rel="rdfs:isDefinedBy" href="#">Back to Top</a></p>
-      </div>
-      <div id="authority" about="[acrt:authority]" typeof="owl:ObjectProperty owl:FunctionalProperty">
-        <h4 property="rdfs:label">authority</h4>
-        <p property="rdfs:comment">This property specifies who (or what) is doing the certifying.</p>
-        <blockquote class="note">
-          <p property="skos:note">The issuing authority can, once again, be a person, business, institution, or any other kind of agent.</p>
-        </blockquote>
-        <dl>
-          <dt>Domain:</dt>
-          <dd><a rel="rdfs:domain" href="#Certification">acrt:Certification</a></dd>
-          <dt>Range:</dt>
-          <dd><a rel="external rdfs:range" href="http://xmlns.com/foaf/0.1/Agent">foaf:Agent</a></dd>
-          <dt>Inverse of:</dt>
-          <dd><a rel="owl:inverseOf" href="#certifies">acrt:certifies</a></dd>
-        </dl>
-        <p><a rel="rdfs:isDefinedBy" href="#">Back to Top</a></p>
-      </div>
-      <div id="certifies" about="[acrt:certifies]" typeof="owl:ObjectProperty owl:InverseFunctionalProperty">
-        <h4 property="rdfs:label">certifies</h4>
-        <p property="rdfs:comment">This property specifies that its subject, an agent, has issued a certification.</p>
-        <dl>
-          <dt>Domain:</dt>
-          <dd><a rel="external rdfs:domain" href="http://xmlns.com/foaf/0.1/Agent">foaf:Agent</a></dd>
-          <dt>Range:</dt>
-          <dd><a rel="rdfs:range" href="#Certification">acrt:Certification</a></dd>
-          <dt>Inverse of:</dt>
-          <dd><a rel="owl:inverseOf" href="#authority">acrt:authority</a></dd>
-        </dl>
-        <p><a rel="rdfs:isDefinedBy" href="#">Back to Top</a></p>
-      </div>
-      <div id="proof" about="[acrt:proof]" typeof="owl:ObjectProperty">
-        <h4 property="rdfs:label">proof</h4>
-        <p property="rdfs:comment">This property points to some proof of the certification, like a scan of an official document or a page on the issuing authority's website that corroborates the certification.</p>
-        <blockquote class="note">
-          <p property="skos:note">The range of this term is left open, but should probably reference a document. It could even point to an actual cryptographic certificate.</p>
-        </blockquote>
-        <dl>
-          <dt>Domain:</dt>
-          <dd><a rel="rdfs:domain" href="#Certification">acrt:Certification</a></dd>
-          <dt>Inverse of:</dt>
-          <dd><a rel="owl:inverseOf" href="#proves">acrt:proves</a></dd>
-          <dt>See also:</dt>
-          <dd><a rel="external rdfs:seeAlso" href="http://www.w3.org/ns/auth/cert">The Cert Ontology</a></dd>
-        </dl>
-        <p><a rel="rdfs:isDefinedBy" href="#">Back to Top</a></p>
-      </div>
-      <div id="proves" about="[acrt:proves]" typeof="owl:ObjectProperty">
-        <h4 property="rdfs:label">proves</h4>
-        <p property="rdfs:comment">This property asserts that its subject is somehow proof of a given certification.</p>
-        <dl>
-          <dt>Range:</dt>
-          <dd><a rel="rdfs:range" href="#Certification">acrt:Certification</a></dd>
-          <dt>Inverse of:</dt>
-          <dd><a rel="owl:inverseOf" href="#proof">acrt:proof</a></dd>
-        </dl>
-        <p><a rel="rdfs:isDefinedBy" href="#">Back to Top</a></p>
-      </div>-->
-    </div>
+      <section>
+        <h3>Value Ordering</h3>
+        <section id="descending" about="[flx:descending]" typeof="owl:DatatypeProperty">
+          <h4 property="rdfs:label" datatype="xsd:token">descending</h4>
+          <p property="rdfs:comment">Specify that the sort should be in descending order.</p>
+          <dl>
+            <dt>Domain:</dt>
+            <dd><a rel="rdfs:domain" href="#SortingPolicy">flx:SortingPolicy</a></dd>
+            <dt>Range:</dt>
+            <dd><a rel="rdfs:range" href="http://www.w3.org/2001/XMLSchema#boolean">xsd:boolean</a></dd>
+          </dl>
+          <p><a rel="rdfs:isDefinedBy" href="#">Back to Top</a></p>
+        </section>
+        <section id="longestFirst" about="[flx:longestFirst]" typeof="owl:DatatypeProperty">
+          <h4 property="rdfs:label" datatype="xsd:token">longestFirst</h4>
+          <p property="rdfs:comment">When this flag is set to true, if two strings are being compared where one (starting from the beginning) is an exact substring of the other, the <em>longer</em> string will precede the shorter one.</p>
+          <aside role="note">
+            <p property="skos:note">In a conventional sort, when two strings that start out identical but one is longer, the longer string will be placed <em>after</em> the shorter one. This flag signals the opposite behaviour.</p>
+          </aside>
+          <dl>
+            <dt>Domain:</dt>
+            <dd><a rel="rdfs:domain" href="#SortingPolicy">flx:SortingPolicy</a></dd>
+            <dt>Range:</dt>
+            <dd><a rel="rdfs:range" href="http://www.w3.org/2001/XMLSchema#boolean">xsd:boolean</a></dd>
+          </dl>
+          <p><a rel="rdfs:isDefinedBy" href="#">Back to Top</a></p>
+        </section>
+        <section id="sortValuesBy" about="[flx:sortValuesBy]" typeof="owl:ObjectProperty">
+          <h4 property="rdfs:label" datatype="xsd:token">sortValuesBy</h4>
+          <p property="rdfs:comment"></p>
+          <dl>
+            <dt>Domain:</dt>
+            <dd><a rel="rdfs:domain" resource="fresnel:PropertyDescription" href="https://www.w3.org/2005/04/fresnel-info/manual/#sublenses">fresnel:PropertyDescription</a></dd>
+            <dt>Range:</dt>
+            <dd rel="rdfs:range">
+              <span about="_:uo2" rel="owl:unionOf" resource="_:q1">
+                <a about="_:q1" rel="rdf:first" resource="rdf:Property" href="">rdf:Property</a> <span about="_:q1" rel="rdf:rest" resource="_:q2">&#x222a;</span> <a about="_:q2" rel="rdf:first" resource="sh:PropertyShape">sh:PropertyShape</a> <span about="_:q2" rel="rdf:rest" resource="_:q3">&#x222a;</span> <a about="_:q3" rel="rdf:first" href="#SortPropertyList">flx:SortPropertyList</a>
+                <span about="_:q3" rel="rdf:rest" resource="rdf:nil"/>
+              </span>
+            </dd>
+          </dl>
+        </section>
+      </section>
+      <section>
+        <h3>Reverse Properties</h3>
+        <section id="reverse" about="[flx:reverse]" typeof="owl:DatatypeProperty">
+          <h4 property="rdfs:label" datatype="xsd:token">reverse</h4>
+          <p property="rdfs:comment">This flag signifies when a property description is intended to represent a <em>reverse</em> relationship.</p>
+          <dl>
+            <dt>Domain:</dt>
+            <dd><a rel="rdfs:domain" resource="fresnel:PropertyDescription" href="https://www.w3.org/2005/04/fresnel-info/manual/#sublenses">fresnel:PropertyDescription</a></dd>
+            <dt>Range:</dt>
+            <dd><a rel="rdfs:range" href="http://www.w3.org/2001/XMLSchema#boolean">xsd:boolean</a></dd>
+          </dl>
+          <p><a rel="rdfs:isDefinedBy" href="#">Back to Top</a></p>
+        </section>
+      </section>
+      <section>
+        <h3>Lens Selection</h3>
+        <section id="priority" about="[flx:priority]" typeof="owl:DatatypeProperty">
+          <h4 property="rdfs:label" datatype="xsd:token">priority</h4>
+          <p property="rdfs:comment">Ascribe an arbitrary tiebreaking priority to a lens.</p>
+          <aside role="note">
+            <p property="skos:note">This property is analogous to <abbr>XSLT</abbr>, which specifies a <code>priority=</code> attribute for overriding ambiguities in template selection.</p>
+          </aside>
+          <dl>
+            <dt>Domain:</dt>
+            <dd><a rel="rdfs:domain" resource="fresnel:Lens" href="https://www.w3.org/2005/04/fresnel-info/manual/#lenscore">fresnel:Lens</a></dd>
+            <dt>Range:</dt>
+            <dd><a rel="rdfs:range" href="http://www.w3.org/2001/XMLSchema#decimal">xsd:decimal</a></dd>
+          </dl>
+        </section>
+      </section>
+    </section>
+    <section>
+      <h2>Individuals</h2>
+      <section>
+        <h3>Reverse Properties</h3>
+        <section id="allReverseProperties" about="[flx:allReverseProperties]" typeof="fresnel:PropertySet">
+          <h4 property="rdfs:label" datatype="xsd:token">allReverseProperties</h4>
+          <p property="rdfs:comment">This property set, analogous to fresnel:allProperties, designates all <em>reverse</em> properties from a given subject.</p>
+          <p><a rel="rdfs:isDefinedBy" href="#">Back to Top</a></p>
+        </section>
+      </section>
+    </section>
     <!--
     <div>
       <h2>References</h2>
