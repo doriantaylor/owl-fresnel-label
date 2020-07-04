@@ -102,14 +102,25 @@
           <p property="rdfs:comment">A SortPropertyList is just an ordinary list with some additional constraints related to sorting properties.</p>
           <dl>
             <dt>Subclass of:</dt>
-            <dd><a rel="rdfs:subClassOf" resource="rdf:List" href="">rdf:List</a></dd>
+            <dd><a rel="rdfs:subClassOf" resource="rdf:List" href="http://www.w3.org/1999/02/22-rdf-syntax-ns#List">rdf:List</a></dd>
             <dt>Property restrictions:</dt>
             <dd rel="rdfs:subClassOf" resource="_:op1">
-              <a rel="owl:onProperty" resource="rdf:first" href="">rdf:first</a> <span rel="owl:allValuesFrom"><span about="_:uo1" rel="owl:unionOf">&#x2208; <a about="_:p1" rel="rdf:first" resource="rdf:Property" href="">rdf:Property</a> &#x222a; <span about="_:p1" rel="rdf:rest"><a about="_:p2" rel="rdf:first" resource="sh:PropertyShape" href="">sh:PropertyShape</a><span about="_:p2" rel="rdf:rest" resource="rdf:nil"/></span></span></span>
+              <a rel="owl:onProperty" resource="rdf:first" href="https://www.w3.org/TR/rdf-schema/#ch_first">rdf:first</a> <span rel="owl:allValuesFrom"><span about="_:uo1" rel="owl:unionOf">&#x2208; <a about="_:p1" rel="rdf:first" resource="rdf:Property" href="https://www.w3.org/TR/rdf-schema/#ch_property">rdf:Property</a> &#x222a; <span about="_:p1" rel="rdf:rest"><a about="_:p2" rel="rdf:first" resource="sh:PropertyShape" href="https://www.w3.org/TR/shacl/#property-shapes">sh:PropertyShape</a><span about="_:p2" rel="rdf:rest" resource="rdf:nil"/></span></span></span>
             </dd>
             <dd rel="rdfs:subClassOf" resource="_:op2">
-              <a rel="owl:onProperty" resource="rdf:rest" href="">rdf:rest</a> &#x2208; <a rel="owl:allValuesFrom" href="#SortPropertyList">flx:SortPropertyList</a>
+              <a rel="owl:onProperty" resource="rdf:rest" href="https://www.w3.org/TR/rdf-schema/#ch_rest">rdf:rest</a> &#x2208; <a rel="owl:allValuesFrom" href="#SortPropertyList">flx:SortPropertyList</a>
             </dd>
+          </dl>
+        </section>
+      </section>
+      <section>
+        <h3>Formatting</h3>
+        <section id="Disposition" about="[flx:Disposition]" typeof="owl:Class">
+          <h4 property="rdfs:label" datatype="xsd:token">Disposition</h4>
+          <p property="rdfs:comment">A <code>Disposition</code> marks out the way a term is rendered on a canvas.</p>
+          <dl>
+            <dt>Subclass of:</dt>
+            <dd><a rel="rdfs:subClassOf" resource="fresnel:PropertyValueStyle" href="https://www.w3.org/2005/04/fresnel-info/manual/#displayingValues">fresnel:PropertyValueStyle</a></dd>
           </dl>
         </section>
       </section>
@@ -152,7 +163,7 @@
             <dt>Range:</dt>
             <dd rel="rdfs:range">
               <span about="_:uo2" rel="owl:unionOf" resource="_:q1">
-                <a about="_:q1" rel="rdf:first" resource="rdf:Property" href="">rdf:Property</a> <span about="_:q1" rel="rdf:rest" resource="_:q2">&#x222a;</span> <a about="_:q2" rel="rdf:first" resource="sh:PropertyShape">sh:PropertyShape</a> <span about="_:q2" rel="rdf:rest" resource="_:q3">&#x222a;</span> <a about="_:q3" rel="rdf:first" href="#SortPropertyList">flx:SortPropertyList</a>
+                <a about="_:q1" rel="rdf:first" resource="rdf:Property" href="https://www.w3.org/TR/rdf-schema/#ch_property">rdf:Property</a> <span about="_:q1" rel="rdf:rest" resource="_:q2">&#x222a;</span> <a about="_:q2" rel="rdf:first" resource="sh:PropertyShape" href="https://www.w3.org/TR/shacl/#constraints-section">sh:PropertyShape</a> <span about="_:q2" rel="rdf:rest" resource="_:q3">&#x222a;</span> <a about="_:q3" rel="rdf:first" href="#SortPropertyList">flx:SortPropertyList</a>
                 <span about="_:q3" rel="rdf:rest" resource="rdf:nil"/>
               </span>
             </dd>
@@ -189,6 +200,19 @@
           </dl>
         </section>
       </section>
+      <section>
+        <h3>Formatting</h3>
+        <section id="disposition" about="[flx:disposition]" typeof="owl:ObjectProperty owl:FunctionalProperty">
+          <h4 property="rdfs:label" datatype="xsd:token">disposition</h4>
+          <p property="rdfs:comment">Ascribe a <code>flx:Disposition</code> to the given format.</p>
+          <dl>
+            <dt>Domain:</dt>
+            <dd><a rel="rdfs:domain" resource="fresnel:Format" href="https://www.w3.org/2005/04/fresnel-info/manual/#stylecore">fresnel:Format</a></dd>
+            <dt>Range:</dt>
+            <dd><a rel="rdfs:range" href="#Disposition">flx:Disposition</a></dd>
+          </dl>
+        </section>
+      </section>
     </section>
     <section>
       <h2>Individuals</h2>
@@ -198,6 +222,29 @@
           <h4 property="rdfs:label" datatype="xsd:token">allReverseProperties</h4>
           <p property="rdfs:comment">This property set, analogous to fresnel:allProperties, designates all <em>reverse</em> properties from a given subject.</p>
           <p><a rel="rdfs:isDefinedBy" href="#">Back to Top</a></p>
+        </section>
+      </section>
+      <section>
+        <h3>Dispositions</h3>
+        <section id="block" about="[flx:block]" typeof="flx:Disposition">
+          <h4 property="rdfs:label" datatype="xsd:token">block</h4>
+          <p property="rdfs:comment">Display each value as a generic block.</p>
+        </section>
+        <section id="paragraph" about="[flx:paragraph]" typeof="flx:Disposition">
+          <h4 property="rdfs:label" datatype="xsd:token">paragraph</h4>
+          <p property="rdfs:comment">Display each value as a paragraph.</p>
+        </section>
+        <section id="section" about="[flx:section]" typeof="flx:Disposition">
+          <h4 property="rdfs:label" datatype="xsd:token">section</h4>
+          <p property="rdfs:comment">Display each value as a section.</p>
+        </section>
+        <section id="inline" about="[flx:inline]" typeof="flx:Disposition">
+          <h4 property="rdfs:label" datatype="xsd:token">inline</h4>
+          <p property="rdfs:comment">Display each value inline.</p>
+        </section>
+        <section id="hidden" about="[flx:hidden]" typeof="flx:Disposition">
+          <h4 property="rdfs:label" datatype="xsd:token">hidden</h4>
+          <p property="rdfs:comment">Render the value in the markup but do not display it.</p>
         </section>
       </section>
     </section>
